@@ -79,6 +79,8 @@
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
 \usepackage{outlines}
+%\usepackage{algorithm}% http://ctan.org/pkg/algorithms
+\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
 
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
@@ -201,7 +203,7 @@ Chcemy zminimalizować iloczyn liczby użytych maszyn i długość wykonywania w
 
 \begin{frame}
     \frametitle{Dwuwymiarowy problem pakowania}
-    Należy tak rozmieścić prostokąty, aby zajmowany przez nie obszar miał minimalne pole powierzchni. W rozważanym wariancie prostokąty, które stykają się bokami należy odsunąć
+    Należy tak rozmieścić prostokąty, aby zajmowany przez nie obszar $G$ miał minimalne pole powierzchni. W rozważanym wariancie prostokąty, które stykają się bokami należy odsunąć
     od siebie na pewną odległość.
    
     \begin{columns}[c]
@@ -222,6 +224,46 @@ Chcemy zminimalizować iloczyn liczby użytych maszyn i długość wykonywania w
          \end{figure}
         
     \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Algorytm pakowania}   
+    Niech $\alpha=(r_1,r_2,\dots,r_n)$ będzie pewnym ciągiem prostokątów. Rozpatrujemy prostokąty
+    zgodnie z kolejnością ich występowania w $\alpha$. Zbiór $P_{i-1}$ zawiera pozycje, na
+    których można umieścić rozpatrywany prostokąt $r_i$.
+    
+    \begin{algorithmic}
+        \State $G\gets\emptyset, P_0\gets\{(0,0)\}$
+        \For{$i\gets 1, n$}
+            \State $O\gets\emptyset$
+            \For{$z$ in $P_{i-1}$} $O\gets O \cup \{insert(G, z, r_i)\}$\EndFor
+            \State $G\gets$ wybrany na podstawie ustalonej strategii
+            obszar z $O$ powstały po wstawieniu $r_i$ na pozycję $z=(x,y)$.
+            \State $P_i\gets P_{i-1}\setminus\{z\}\cup\{(x+d_{r_c,r_i}\cdot\delta,y),
+            (x+d_{r_c,r_i}\cdot\delta,y+l_i)\}$
+        \EndFor
+    \end{algorithmic}
+    $\delta\in\{0,1\}$ i przyjmuje wartość 1, jeżeli wstawiany prostokąt $r_i$ został
+    przesunięty o wielkość $d_{r_c,r_i}$, a pozycja $z$ została utworzona w wyniku
+    wstawienia prostokąta $r_c$.
+    
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Strategie pakowania}
+    \begin{enumerate}
+        \item \textit{minimalnego obszaru} - wybierana jest pozycja, powodująca minimalne
+        powiększenie bieżącego obszaru.
+        \item \textit{pole-wymiary} - obliczana jest wartość współczynnika na podstawie pola
+        powierzchni tymczasowego obszaru i różnicy długości jego boków. Zastosowanie
+        tego współczynnika ma na celu tworzenie obszarów o równomiernym kształcie (zbliżonym
+        do kwadratu).
+        \item \textit{ruletki} - pozycja wstawienia prostokąta jest losowana zgodnie z zasadą
+        ruletki. Prawdopodobieństwo wylosowania jest proporcjonalne do wielkości tymczasowego
+        obszaru.
+        \item \textit{XYZ} - pozycja jest losowana zgodnie z rozkładem jednostajnym.
+    \end{enumerate}
 \end{frame}
 %------------------------------------------------
 \section{First Section} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
