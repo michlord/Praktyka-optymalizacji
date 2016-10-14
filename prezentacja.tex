@@ -186,6 +186,43 @@ Chcemy zminimalizować iloczyn liczby użytych maszyn i długość wykonywania w
     $$F(\Theta^*)=min\{F(\Theta):\Theta\in\Omega\}.$$
 \end{frame}
 
+\begin{frame}
+    \frametitle{Charakterystyka problemu}
+    \begin{outline}
+        \1 Okazuje się, że problem jest równoważny pewnemu uogólnieniu dwuwymiarowego
+        problemu pakowania.
+        \1 Są to problemy NP-trudne. Algorytmy wyznaczania rozwiązania optymalnego mają wykładniczą
+        złożoność, dlatego mogą być stosowane jedynie do rozwiązywania przykładów o niewielkich rozmiarach.
+        \1 Algorytmy przybliżone często dają bardzo zadowalające wyniki różniące się od najlepszych rozwiązań o mniej niż 15\%.
+        \1 Przedstawimy algorytm symulowanego wyżarzania z różnymi wariantami strategii
+        pakowania.
+    \end{outline}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Dwuwymiarowy problem pakowania}
+    Należy tak rozmieścić prostokąty, aby zajmowany przez nie obszar miał minimalne pole powierzchni. W rozważanym wariancie prostokąty, które stykają się bokami należy odsunąć
+    od siebie na pewną odległość.
+   
+    \begin{columns}[c]
+        
+        \column{.45\textwidth}
+        \textbf{Specyfikacja}
+        \begin{outline}
+            \1 $\mathcal{R}=\{r_1,r_2,\dots,r_n \}$ - zbiór prostokątów
+            \1 $(l_k,w_k)$ - wysokość i szerokość prostokąta $r_k$
+            \1 $d_{i,j}$ - odległość o jaką należy odsunąć prostokąt $r_i$ od $r_j$,
+            gdy występują bezpośrednio obok siebie
+        \end{outline}
+        
+        \column{.5\textwidth}
+         \begin{figure}[prostokaty]
+             \centering
+             \includegraphics[scale=0.5]{diagram_prostokaty}
+         \end{figure}
+        
+    \end{columns}
+\end{frame}
 %------------------------------------------------
 \section{First Section} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
 %------------------------------------------------
