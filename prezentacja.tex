@@ -79,8 +79,9 @@
 \usepackage{graphicx} % Allows including images
 \usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
 \usepackage{outlines}
-%\usepackage{algorithm}% http://ctan.org/pkg/algorithms
-\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
+\usepackage{algorithm}% http://ctan.org/pkg/algorithms
+%\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
+\usepackage[noend]{algpseudocode}
 
 %----------------------------------------------------------------------------------------
 %	TITLE PAGE
@@ -196,8 +197,8 @@ Chcemy zminimalizować iloczyn liczby użytych maszyn i długość wykonywania w
         \1 Są to problemy NP-trudne. Algorytmy wyznaczania rozwiązania optymalnego mają wykładniczą
         złożoność, dlatego mogą być stosowane jedynie do rozwiązywania przykładów o niewielkich rozmiarach.
         \1 Algorytmy przybliżone często dają bardzo zadowalające wyniki różniące się od najlepszych rozwiązań o mniej niż 15\%.
-        \1 Przedstawimy algorytm symulowanego wyżarzania z różnymi wariantami strategii
-        pakowania.
+        \1 Oczywiste dolne oszacowanie rozwiązania optymalnego problemu pakowania może być
+        sumą pól wszystkich prostokątów.
     \end{outline}
 \end{frame}
 
@@ -237,8 +238,9 @@ Chcemy zminimalizować iloczyn liczby użytych maszyn i długość wykonywania w
         \For{$i\gets 1, n$}
             \State $O\gets\emptyset$
             \For{$z$ in $P_{i-1}$} $O\gets O \cup \{insert(G, z, r_i)\}$\EndFor
-            \State $G\gets$ wybrany na podstawie ustalonej strategii
-            obszar z $O$ powstały po wstawieniu $r_i$ na pozycję $z=(x,y)$.
+            \State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{ $G\gets$ wybrany na
+            podstawie ustalonej strategii obszar z $O$ powstały po wstawieniu $r_i$
+            na pozycję $z=(x,y)$.}
             \State $P_i\gets P_{i-1}\setminus\{z\}\cup\{(x+d_{r_c,r_i}\cdot\delta,y),
             (x+d_{r_c,r_i}\cdot\delta,y+l_i)\}$
         \EndFor
@@ -265,6 +267,50 @@ Chcemy zminimalizować iloczyn liczby użytych maszyn i długość wykonywania w
         \item \textit{XYZ} - pozycja jest losowana zgodnie z rozkładem jednostajnym.
     \end{enumerate}
 \end{frame}
+
+\begin{frame}
+    \frametitle{Algorytm symulowanego wyżarzania}
+    Przykładowe rozwiązanie dopuszczalne można obliczyć za pomocą algorytmu pakowania na
+    podstawie losowo wyznaczonego ciągu $\alpha.$ Takie rozwiązanie możne jednak znacznie
+    odbiegać od optymalnego. Pojawia się pomysł, aby generować otoczenie poprzez modyfikację
+    rozpatrywanego rozwiązania i w przypadku gdy bieżące rozwiązanie jest gorsze niż to z
+    sąsiedztwa, zastąpić je nim.
+    
+    Algorytm symulowanego wyżarzania rozszerza ten pomysł i dodatkowo przyjmuje następujące
+    parametry:
+    \begin{outline}
+        \1 temperatura początkowa
+        \1 funkcja prawdopodobieństwa z jakim są akceptowane rozwiązania gorsze od bieżącego
+        \1 schemat schładzania temperatury (zmniejszania wartości)
+    \end{outline}
+    Wybór tych parametrów wpływa na częstość akceptowania rozwiązań gorszych od bieżącego,
+    a więc na zdolność algorytmu do opuszczania minimów lokalnych, jak i stabilność poszukiwań.
+    
+\end{frame}
+
+\begin{frame}
+    \frametitle{Algorytm symulowanego wyżarzania}
+    Przez $\mathcal{N}(\alpha)$ oznaczamy otoczenie, przez $G(\alpha)$ pole obszaru wewnątrz
+    którego są umieszczone prostokąty, a przez $t$ parametr kontrolny (temperaturę).
+    
+    \begin{algorithmic}
+        \State $\alpha_{best}\gets\alpha$
+        \Repeat
+            \Repeat
+            \State $\beta\gets$ losowy element z otoczenia $\mathcal{N}(\alpha)$
+            \If{$G(\beta)< G(\alpha)$} $\alpha\gets\beta$
+            \Else
+                \If{$e^{\frac{G(\alpha)-G(\beta)}{t}}>\textit{random}$} $\alpha\gets\beta$
+                \EndIf
+            \EndIf
+            \If{$G(\beta)<G(\alpha_{best})$} $\alpha_{best}\gets\beta$
+            \EndIf
+            \Until{zmienić parametr kontrolny}
+            \State zmień parametr kontrolny $t$
+        \Until{warunek końca}
+    \end{algorithmic}
+\end{frame}
+
 %------------------------------------------------
 \section{First Section} % Sections can be created in order to organize your presentation into discrete blocks, all sections and subsections are automatically printed in the table of contents as an overview of the talk
 %------------------------------------------------
