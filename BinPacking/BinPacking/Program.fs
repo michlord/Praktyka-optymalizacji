@@ -74,20 +74,30 @@ let pack r alpha d m strategy =
             
             if o = [] then []
             else
-            
-            // choose some list from o
-            // from this list pick the first element and get its (left, top)
-            // remove this (left, top) from p
-            // add new points to p
+                let (g, r) = strategy o
 
-            let (g, r) = strategy o
+                let p = List.filter (fun (l,t) -> l <> r.left || t <> r.top) p
+                let p = (r.left+r.width,r.top) :: (r.left,r.top+r.height) :: p
 
-            let p = List.filter (fun (l,t) -> l <> r.left || t <> r.top) p
-            let p = (r.left+r.width,r.top) :: (r.left,r.top+r.height) :: p
-
-            pack g p xs
+                pack g p xs
         | [] -> g
     pack [] [(0,0)] alpha
+
+
+// neighbourhood contains n^2 permuations
+// of alpha where in each permutation
+// a single pair of elements is swapped
+let neighbourhood alpha  =
+    let last = List.length alpha - 1
+    seq {for i in 0..last do 
+            for j in (i+1)..last -> 
+                let copy = Array.ofList alpha
+                let tmp = copy.[i]
+                copy.[i] <- copy.[j]
+                copy.[j] <- tmp
+                List.ofArray copy
+        }
+
 
 let test = 
     let (rectangles, displacements) = inputData 4 10 10 20 4
