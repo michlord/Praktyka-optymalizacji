@@ -99,11 +99,53 @@ let neighbourhood alpha  =
         }
 
 
-let test = 
-    let (rectangles, displacements) = inputData 4 10 10 20 4
-    let alpha = [for x in 0..9 -> x]
-    let strategy = minAreaStrategy
-    pack rectangles alpha displacements 18 strategy
+let simmulatedAnnealing r d m s a (t0 : float) (tchange : float) titerchange titerret maxiter =
+    let ar x = area (pack r x d m s)
+    let rnd = System.Random()
+    let shuffleR (r : System.Random) xs = xs |> Seq.sortBy (fun _ -> r.Next())
+
+    let mutable iterCount = 0
+
+    let mutable alpha = a
+    let mutable best = a
+    let mutable n = shuffleR rnd (neighbourhood alpha)
+    let mutable t = t0
+
+    while iterCount < maxiter do
+        let beta = Seq.tryHead n
+        match beta with
+        | Some beta ->
+            n <- Seq.tail n
+            if (ar beta) < (ar alpha) then alpha <- beta
+            else if System.Math.Pow(System.Math.E, (float ((ar alpha)-(ar beta)))/(float t)) < (float (rnd.Next(0,99))) / 100.0
+            then alpha <- beta
+            if (ar beta) < (ar best) then best <- beta
+        | None -> () // error, this could happen but I don't know what to do with it yet
+
+        if iterCount % titerchange = 0 then t <- t * tchange
+        if iterCount % titerret = 0 then t <- t0
+
+        iterCount <- iterCount + 1
+
+    (best, ar best, pack r best d m s)
+
+
+
+
+let test : Rect list = 
+    let (r, d) = inputData 4 10 10 20 4
+    let a = [for x in 0..9 -> x]
+    let s = minAreaStrategy
+    let (alpha, area, g) = simmulatedAnnealing r d 18 s a 125.0 0.98 100 500 5000
+    g 
+
+
+
+//let test = 
+//    let (rectangles, displacements) = inputData 4 10 10 20 4
+//    let alpha = [for x in 0..9 -> x]
+//    let strategy = minAreaStrategy
+//    pack rectangles alpha displacements 18 strategy
 
 
 
