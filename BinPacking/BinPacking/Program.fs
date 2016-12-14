@@ -23,13 +23,43 @@ type Rect = {left : int; top : int; width : int; height : int; index : int}
 // or if you want to make your life easier...
 // let rect l t w h i = {left = l; top = t; width = w; height = h; index = i}
 
+
+
+
+
+
 let insert (g : Rect list) (rect : Rect) d m =
     if m < rect.top+rect.height then None
     else
         // find rectangles that come before 'rect'.
-        let pred = List.filter (fun {left=l; top=t} -> l < rect.left + rect.width && t >= rect.top && t < rect.top + rect.height ) g
+        let pred (g : Rect list) (r : Rect) =
+
+            let rec pred g high low =
+                match g with
+                | hd :: tl ->
+                    let t = max hd.top low
+                    let b = min (hd.top+hd.height) high
+                    if b <= low || t >= high 
+                        then pred tl high low
+                    elif t = low && b = high
+                        then [hd]
+                    elif t = low 
+                        then hd :: (pred tl high b)
+                    elif b = high
+                        then hd :: (pred tl t low)
+                    else
+                        [hd] @ (pred tl high b) @ (pred tl t low)
+            
+                | [] -> []
+    
+            let l = List.sort g
+                    |> List.takeWhile (fun {left=l} -> l < r.left + r.width)
+                    |> List.rev
+   
+            pred l (r.top+r.height) r.top
+
         // find min left coordinate where 'rect' could be placed based on d (displacement) values.
-        let minLeft = List.fold (fun acc {left=l; width=w; index=i} -> max acc (l+w+(d i rect.index))) 0 pred
+        let minLeft = List.fold (fun acc {left=l; width=w; index=i} -> max acc (l+w+(d i rect.index))) 0 (pred g rect)
         // check if the displaced 'rect' doesn't intersect with some other rectangle
         let rect = {rect with left=minLeft}
         // when checking if two rects overlap take d into consideration
