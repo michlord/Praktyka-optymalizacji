@@ -155,7 +155,7 @@ let simmulatedAnnealing r d m s a (t0 : float) (tchange : float) titerchange tit
         let beta = Seq.tryHead n
         match beta with
         | Some beta ->
-            n <- Seq.tail n
+            n <- Seq.tail n // It could fail here...
             if (ar beta) < (ar alpha) then alpha <- beta
             else if System.Math.Pow(System.Math.E, (float ((ar alpha)-(ar beta)))/(float t)) < (float (rnd.Next(0,99))) / 100.0
             then alpha <- beta
@@ -180,6 +180,40 @@ let test : Rect list =
     g 
 
 
+let testSuite types size strategy =
+    let stopWatch = System.Diagnostics.Stopwatch.StartNew()
+
+    let (r, d) = inputData types size 10 20 4
+    let alpha = [for x in 0..(size-1) -> x]
+    let (alpha, area, g) = simmulatedAnnealing r d 18 strategy alpha 125.0 0.98 100 500 5000
+    
+    let areaSum r =
+        Array.sumBy (fun (w, h) -> w*h) r
+
+    let precision =
+        (float (areaSum r)) / (float area)
+
+    let sides = 
+        let maxh = List.maxBy (fun {top=t; height=h} -> t+h) g
+        let maxw = List.maxBy (fun {left=l; width=w} -> l+w) g
+        let height = maxh.top+maxh.height
+        let width = maxw.left+maxw.width
+        (min width height, max width height)
+
+    let (shorter, longer) = sides
+    let ratio = (float longer) / (float shorter)
+    
+
+    stopWatch.Stop()
+
+    let elapsed = stopWatch.Elapsed.TotalSeconds
+
+    System.Console.WriteLine("Typy: {0}, Dokładność: {1}, Pole obszaru: {2}, Krótszy bok: {3}, Dłuższy bok: {4}, Ratio: {5}, Czas: {6}",
+        types, precision, area, shorter, longer, ratio, elapsed)
+
+
+
+
 
 //let test = 
 //    let (rectangles, displacements) = inputData 4 10 10 20 4
@@ -193,21 +227,34 @@ let test : Rect list =
 open System.Drawing 
 open System.Windows.Forms
 
-
-
-
 [<EntryPoint>]
-let main argv = 
-    printfn "%A" argv
-    let res = test
-    let frm = new Form()
-    frm.Paint.Add(fun e -> 
-        let p = new Pen(Color.Black, 1.0f)
-        List.iter (fun {left=l; top=t; width=w; height=h} -> 
-            let scale = 5
-            e.Graphics.DrawRectangle(p, l*scale,t*scale,w*scale,h*scale)
-            ) res
-    )
+let main argv =
+    let types = [3; 5; 8; 10; 12; 15; 20]
+    System.Console.WriteLine("Strategia min. obszaru")
+    for i in types do
+        testSuite i 20 minAreaStrategy
+    System.Console.WriteLine("Strategia współczynnika")
+    for i in types do
+        testSuite i 20 ratioStrategy
+    System.Console.WriteLine("Strategia losowa")
+    for i in types do
+        testSuite i 20 randomStrategy
+    
+    0
 
-    System.Windows.Forms.Application.Run(frm)
-    0 // return an integer exit code
+
+//[<EntryPoint>]
+//let main argv = 
+//    printfn "%A" argv
+//    let res = test
+//    let frm = new Form()
+//    frm.Paint.Add(fun e -> 
+//        let p = new Pen(Color.Black, 1.0f)
+//        List.iter (fun {left=l; top=t; width=w; height=h} -> 
+//            let scale = 5
+//            e.Graphics.DrawRectangle(p, l*scale,t*scale,w*scale,h*scale)
+//            ) res
+//    )
+//
+//    System.Windows.Forms.Application.Run(frm)
+//    0 // return an integer exit code
