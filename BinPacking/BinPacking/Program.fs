@@ -229,16 +229,22 @@ open System.Windows.Forms
 
 [<EntryPoint>]
 let main argv =
+    let run i s =
+        try
+            testSuite i 20 s
+        with
+            | _ -> System.Console.WriteLine("fail")
+
     let types = [3; 5; 8; 10; 12; 15; 20]
     System.Console.WriteLine("Strategia min. obszaru")
     for i in types do
-        testSuite i 20 minAreaStrategy
+        run i minAreaStrategy
     System.Console.WriteLine("Strategia współczynnika")
     for i in types do
-        testSuite i 20 ratioStrategy
+        run i ratioStrategy
     System.Console.WriteLine("Strategia losowa")
     for i in types do
-        testSuite i 20 randomStrategy
+        run i randomStrategy
     
     0
 
