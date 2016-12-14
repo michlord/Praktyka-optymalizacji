@@ -89,7 +89,17 @@ let area g =
 let minAreaStrategy xss =
     List.minBy (fun (g, _) -> area g) xss
 
+let randomStrategy (xss : (Rect list * 'a) list) =
+    let r = System.Random()
+    let shuffleR (r : System.Random) xs = xs |> Seq.sortBy (fun _ -> r.Next())
+    xss |> Seq.ofList |> shuffleR r |> Seq.head
 
+let ratioStrategy xss =
+    let coeff g =
+        let maxh = List.maxBy (fun {top=t; height=h} -> t+h) g
+        let maxw = List.maxBy (fun {left=l; width=w} -> l+w) g    
+        abs (maxh.top+maxh.height - maxw.left+maxw.width)
+    List.minBy (fun (g, _) -> (area g)*(coeff g)) xss
 
 let pack r alpha d m strategy =
     let rect left top i =
