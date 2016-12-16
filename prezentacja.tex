@@ -364,7 +364,7 @@ Chcemy zminimalizować iloczyn liczby użytych maszyn i długość wykonywania w
     \frametitle{Dane wejściowe}
     Wykonano serię testów dla następujących parametrów
     \begin{outline}
-        \1 Ilość prostokątów - 50
+        \1 Ilość prostokątów - 50; Ilość maszyn - 160
         \1 Ilość typów prostokątów - [3, 5, 8, 10, 12, 15, 20]
         \1 Strategie pakowania - [min. obszaru, pole-wymiary, losowa]
     \end{outline}
@@ -396,10 +396,19 @@ Chcemy zminimalizować iloczyn liczby użytych maszyn i długość wykonywania w
                  15 & 0.65539995 & 7426 & 47 & 158 & 3.361702 & 33.93743 \\
                  20 & 0.63566308 & 5580 & 36 & 155 & 4.305556 & 34.0191 \\
                 \end{tabular}}%
-                \label{tab:addlabel}%
+                \label{tab:minarea}%
             \end{table}%
             
             
+\end{frame}
+
+\begin{frame}
+    \frametitle{Przykładowe upakowanie}
+    \begin{figure}[prostokatyMinArea]
+        \centering
+        \caption{Strategia minimalnego obszaru}
+        \includegraphics[scale=0.3]{minArea}
+    \end{figure}
 \end{frame}
 
 \begin{frame}
@@ -419,9 +428,18 @@ Chcemy zminimalizować iloczyn liczby użytych maszyn i długość wykonywania w
                 15 & 0.58703512 & 7744 & 88 & 88 & 1  & 33.57598 \\
                 20 & 0.59922251 & 5402 & 73 & 74 & 1.013699 & 33.12795 \\
             \end{tabular}}%
-            \label{tab:addlabel}%
+            \label{tab:minratio}%
         \end{table}%
         
+\end{frame}
+
+\begin{frame}
+    \frametitle{Przykładowe upakowanie}
+    \begin{figure}[prostokatyMinRatio]
+        \centering
+        \caption{Strategia współczynnika pole-wymiary}
+        \includegraphics[scale=0.3]{minRatio}
+    \end{figure}
 \end{frame}
 
 \begin{frame}
@@ -441,18 +459,43 @@ Chcemy zminimalizować iloczyn liczby użytych maszyn i długość wykonywania w
                 15 & 0.23601826 & 27375 & 127 & 174 & 1.370079 & 28.42857 \\
                 20 & 0.18061538 & 19500 & 100 & 169 & 1.69 & 28.92149 \\
             \end{tabular}}%
-            \label{tab:addlabel}%
+            \label{tab:random}%
         \end{table}%
         
 \end{frame}
 
 \begin{frame}
+    \frametitle{Przykładowe upakowanie}
+    \begin{figure}[prostokatyRandom]
+        \centering
+        \caption{Strategia losowa}
+        \includegraphics[scale=0.3]{random}
+    \end{figure}
+\end{frame}
+
+\begin{frame}
     \frametitle{Wnioski}
-    
+    \begin{outline}
+        \1 Najlepsze wyniki uzyskano stosując strategię minimalnego obszaru.
+        Wartości współczynnika $\textit{Ratio}$ były zdecydowanie większe od wartości otrzymanych
+        dla innych strategii.
+        
+        \1 Wyniki strategii współczynnika-wymiary były niewiele gorsze. Natomiast dla tej
+        strategii otrzymano najmniejsze wartości współczynnika $\textit{Ratio}$ bliskie 1.00.
+        Oznacza to, że kształt wyznaczanego obszaru był zbliżony do kwadratu. 
+        
+        \1 Wartości otrzymane za pomocą strategii losowej były znacząco gorsze od pozostałych.
+        Jedyną zaletą strategii był krótszy czas wykonywania obliczeń.
+        
+        \1 Można wywnioskować, że w przypadku problemu harmonogramowania zadań wieloprocesorowych,
+        wybór strategi zależy od relacji kosztu czasu wykorzystania procesorów, a liczbą użytych
+        procesorów.
+    \end{outline}
 \end{frame}
 
 \begin{frame}
     \frametitle{Literatura}
+    
     
 \end{frame}
 
